@@ -140,7 +140,7 @@ class sentence_filler(object):
         target_embedding_mean = tf.reduce_mean(tf.multiply(tf.nn.embedding_lookup(embedding , self.target),mask),axis=1)
         
         
-        loss = tf.square(target_embedding_mean-output_embedding_mean)
+        loss = tf.reduce_mean(tf.square(target_embedding_mean-output_embedding_mean))
         
         self.batch_loss = tf.reduce_mean(loss , axis = 0)
         
