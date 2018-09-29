@@ -68,11 +68,11 @@ def convert (book , stoi , itos , vectors):
 # In[5]:
 
 
-def make_corpus(book_urls , stoi, itos , vectors):
+def make_corpus(books , stoi, itos , vectors):
     """
     description: this function receives book_urls and tokenizes their text. then  it calls 'convert' function.
     
-    inputs: book_urls: gutenberg url of books which we are going to use as our corpus
+    inputs: books: books which we are going to use as our corpus
             stoi: a dictionary from words to their indices in GloVe 
             itos: a list in which index of a word is its index in GloVe vectors
             vectors: a vocab_size*embedding_length array containing vector representation of each word in its corresponding row
@@ -80,7 +80,17 @@ def make_corpus(book_urls , stoi, itos , vectors):
     outputs: stoi , itos , vectors after adding new words
              book_by_index: our corpus after converting words to their GloVe indices
     """
+
+    book_by_index , stoi , itos , vectors = convert(books , stoi , itos , vectors)
     
+
+    return stoi , itos , vectors , book_by_index
+
+
+# In[ ]:
+
+
+def download_books(book_urls):
     sents=[]
     corpus=[]
     
@@ -90,12 +100,8 @@ def make_corpus(book_urls , stoi, itos , vectors):
         sents = list(sent_tokenize(raw))
         for sent in sents:
             corpus.append(list(word_tokenize(sent)))
-
-
-    book_by_index , stoi , itos , vectors = convert(corpus , stoi , itos , vectors)
     
-
-    return stoi , itos , vectors , book_by_index
+    return corpus
 
 
 # In[7]:
@@ -106,10 +112,12 @@ if __name__=='__main__':
     stoi = open_file('stoi.pkl')
     itos = open_file('itos.pkl')
     vectors = open_file('vectors.pkl')
-
-    stoi , itos , vectors , book_by_index = make_corpus(['http://www.gutenberg.org/cache/epub/730/pg730.txt'] 
-                , stoi , itos , vectors)
     
+    books = download_books(['http://www.gutenberg.org/cache/epub/730/pg730.txt'] )
+
+    stoi , itos , vectors , book_by_index = make_corpus(books , stoi , itos , vectors)
+    
+    print (vectors.shape[0])
     
     #writing back data
     dump (stoi , 'stoi.pkl')
